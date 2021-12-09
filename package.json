@@ -1,0 +1,66 @@
+{
+  "name": "customer-management-blitz",
+  "version": "1.0.0",
+  "scripts": {
+    "dev": "blitz dev",
+    "build": "blitz build",
+    "start": "blitz start",
+    "studio": "blitz prisma studio",
+    "lint": "eslint --ignore-path .gitignore --ext .js,.ts,.tsx .",
+    "test": "jest",
+    "test:watch": "jest --watch",
+    "prepare": "husky install"
+  },
+  "prisma": {
+    "schema": "db/schema.prisma"
+  },
+  "prettier": {
+    "semi": false,
+    "printWidth": 100
+  },
+  "lint-staged": {
+    "*.{js,ts,tsx}": [
+      "eslint --fix"
+    ]
+  },
+  "dependencies": {
+    "@chakra-ui/icons": "1.1.1",
+    "@chakra-ui/react": "1.7.2",
+    "@emotion/react": "11.7.0",
+    "@emotion/styled": "11.6.0",
+    "@heroicons/react": "1.0.5",
+    "@prisma/client": "3.6.0",
+    "@types/html-pdf": "2.2.1",
+    "@types/stream-array": "1.1.0",
+    "@types/svg-to-pdfkit": "0.1.0",
+    "axios": "0.24.0",
+    "blitz": "0.43.0",
+    "dotenv": "10.0.0",
+    "final-form": "4.20.4",
+    "framer-motion": "5.3.3",
+    "html-pdf": "3.0.1",
+    "js-file-download": "0.4.12",
+    "pdfkit": "0.13.0",
+    "react": "18.0.0-alpha-5ca4b0433-20211020",
+    "react-dom": "18.0.0-alpha-5ca4b0433-20211020",
+    "react-final-form": "6.5.7",
+    "stream-array": "1.1.2",
+    "svg-to-pdfkit": "0.1.8",
+    "zod": "3.11.6"
+  },
+  "devDependencies": {
+    "@types/pdfkit": "0.12.3",
+    "@types/preview-email": "2.0.1",
+    "@types/react": "17.0.37",
+    "eslint": "8.3.0",
+    "husky": "7.0.4",
+    "lint-staged": "12.1.2",
+    "prettier": "2.5.0",
+    "prettier-plugin-prisma": "3.6.0",
+    "pretty-quick": "3.1.2",
+    "preview-email": "3.0.5",
+    "prisma": "3.6.0",
+    "typescript": "~4.4"
+  },
+  "private": true
+}

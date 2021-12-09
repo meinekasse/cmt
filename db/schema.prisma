@@ -1,0 +1,182 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+// --------------------------------------
+
+enum Role {
+  USER
+  ADMIN
+  WORKER
+}
+
+enum ColorMode {
+  light
+  dark
+}
+
+model User {
+  id             Int       @id @default(autoincrement())
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+  name           String
+  surname        String
+  email          String    @unique
+  hashedPassword String?
+  roles          Role[]
+  colorMode      ColorMode @default(light)
+
+  tokens       Token[]
+  sessions     Session[]
+  companyOwner CompanyOwner[]
+  Raport       Raport[]
+}
+
+model Session {
+  id                 Int       @id @default(autoincrement())
+  createdAt          DateTime  @default(now())
+  updatedAt          DateTime  @updatedAt
+  expiresAt          DateTime?
+  handle             String    @unique
+  hashedSessionToken String?
+  antiCSRFToken      String?
+  publicData         String?
+  privateData        String?
+
+  user   User? @relation(fields: [userId], references: [id])
+  userId Int?
+}
+
+model Token {
+  id          Int       @id @default(autoincrement())
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  hashedToken String
+  type        TokenType
+  expiresAt   DateTime
+  sentTo      String
+
+  user   User @relation(fields: [userId], references: [id])
+  userId Int
+
+  @@unique([hashedToken, type])
+}
+
+// NOTE: It's highly recommended to use an enum for the token type
+//       but enums only work in Postgres.
+//       See: https://blitzjs.com/docs/database-overview#switch-to-postgresql
+
+enum TokenType {
+  RESET_PASSWORD
+}
+
+enum CompanyType {
+  GmbH
+  Einzelfirma
+}
+
+model CompanyOwner {
+  owner     User    @relation(fields: [ownerId], references: [id], onDelete: Cascade)
+  ownerId   Int
+  company   Company @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  companyId Int
+
+  @@id([ownerId, companyId])
+}
+
+model Company {
+  id                      Int                 @id @default(autoincrement())
+  createdAt               DateTime            @default(now())
+  updatedAt               DateTime            @updatedAt
+  name                    String
+  type                    CompanyType
+  phone                   String
+  email                   String
+  webpage                 String?
+  active                  Boolean             @default(true)
+  street                  String
+  streetnumber            String?
+  city                    String
+  postalcode              String
+  country                 Country
+  ownerConnection         CompanyOwner[]
+  companyRaportConnection CompanyRaport[]
+  pdfArchive              PdfCompanyArchive[]
+}
+
+enum Country {
+  DE
+  CH
+}
+
+enum Currency {
+  EUR
+  CHF
+}
+
+model Product {
+  id              Int      @id @default(autoincrement())
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  modelname       String
+  modelserial     String   @unique
+  price           Float
+  worktimehours   Int      @default(0)
+  worktimeminutes Int      @default(0)
+  currency        Currency
+  raports         Raport[]
+}
+
+enum TaskType {
+  Installation
+  Repair
+  Maintainance
+  Update
+}
+
+model PdfRaportArchive {
+  id        Int      @id @default(autoincrement())
+  raport    Raport   @relation(fields: [raportId], references: [id], onDelete: Cascade)
+  raportId  Int
+  createdAt DateTime @default(now())
+  pdf       Bytes
+}
+
+model PdfCompanyArchive {
+  id        Int      @id @default(autoincrement())
+  company   Company  @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  companyId Int
+  createdAt DateTime @default(now())
+  pdf       Bytes
+}
+
+model CompanyRaport {
+  company   Company @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  companyId Int
+  raport    Raport  @relation(fields: [raportId], references: [id], onDelete: Cascade)
+  raportId  Int
+
+  @@id([raportId, companyId])
+}
+
+model Raport {
+  id                      Int                @id @default(autoincrement())
+  createdAt               DateTime           @default(now())
+  updatedAt               DateTime           @updatedAt
+  tasktype                TaskType           @default(Installation)
+  taskname                String
+  taskdescription         String
+  createdBy               User               @relation(fields: [userId], references: [id])
+  userId                  Int
+  products                Product[]
+  companyRaportConnection CompanyRaport[]
+  PdfRaportArchive        PdfRaportArchive[]
+}
