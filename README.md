@@ -21,6 +21,7 @@ Then run the migrations for the database
 npx blitz prisma migrate
 ```
 
+Please make sure you edited the [settings.json](data/settings.json) file before running the application.
 
 Run your app in the development mode.
 
