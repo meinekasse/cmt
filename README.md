@@ -15,6 +15,12 @@ First install the dependencies:
 yarn
 ```
 
+Then run the migrations for the database
+
+```
+npx blitz prisma migrate
+```
+
 
 Run your app in the development mode.
 
